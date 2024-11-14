@@ -1,0 +1,1 @@
+web gunicorn password_blocklist.wsgi:application --log-file -

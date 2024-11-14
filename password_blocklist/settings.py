@@ -21,6 +21,9 @@ from cryptography.fernet import Fernet
 from pathlib import Path
 from dotenv import load_dotenv
 
+import django_heroku
+import dj_database_url
+
 load_dotenv()
 
 SECRET_ENCRYPTION_KEY = os.getenv("SECRET_ENCRYPTION_KEY")
@@ -40,7 +43,8 @@ SECRET_KEY = 'django-insecure-!_dug2z!n$s^jiw30@a9@#bu!1b#dd@z7*vjo@j#ru%@kgvj!#
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1']
+# ALLOWED_HOSTS = ['localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['*']
 
 LOGIN_REDIRECT_URL = 'home'
 
@@ -135,9 +139,14 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
+django_heroku.settings(locals())
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'accounts.CustomUser'
+
