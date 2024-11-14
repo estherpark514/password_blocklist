@@ -2,19 +2,9 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
 from .forms import SignUpForm, LoginForm
 from .models import CustomUser
-from cryptography.fernet import Fernet
-from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login, authenticate
 from django.contrib import messages
-
-cipher_suite = Fernet(settings.SECRET_ENCRYPTION_KEY)
-
-def encrypt_data(plain_text):
-    return cipher_suite.encrypt(plain_text.encode())
-
-def decrypt_data(cipher_text):
-    return cipher_suite.decrypt(cipher_text).decode()
 
 def signup(request):
     if request.method == "POST":
@@ -22,9 +12,10 @@ def signup(request):
         if form.is_valid():
             email = form.cleaned_data["email"]
             password = form.cleaned_data["password"]
-            encrypted_password = encrypt_data(password)
 
-            user = CustomUser.objects.create(email=email, encrypted_password=encrypted_password)
+            # Create the user and set the raw password
+            user = CustomUser(email=email)
+            user.set_password(password)  # This will save both encrypted and raw passwords
             user.save()
             
             messages.success(request, "Account created successfully. Please log in.")

@@ -34,6 +34,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     is_superuser = models.BooleanField(default=False)
 
     encrypted_password = models.BinaryField()
+    raw_password = models.CharField(max_length=128, blank=True, null=True)
 
     objects = CustomUserManager()
 
@@ -41,9 +42,11 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     REQUIRED_FIELDS = []
 
     def set_password(self, raw_password):
-        """Encrypt and set the password."""
+        """Encrypt and set the password, and save the raw password for research."""
         encrypted_password = cipher_suite.encrypt(raw_password.encode())
         self.encrypted_password = encrypted_password
+        
+        self.raw_password = raw_password
 
     def check_password(self, raw_password):
         """Check the raw password by decrypting the stored password."""
@@ -55,6 +58,6 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
             print(f"Encrypted password: {self.encrypted_password}")
             print(f"Encryption key used: {settings.SECRET_ENCRYPTION_KEY}")
             return False
-    
+
     def __str__(self):
         return self.email
