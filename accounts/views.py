@@ -6,6 +6,9 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login, authenticate
 from django.contrib import messages
 
+def instruction(request):
+    return render(request, 'instruction.html')
+
 def signup(request):
     if request.method == "POST":
         form = SignUpForm(request.POST)
