@@ -61,3 +61,9 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 
     def __str__(self):
         return self.email
+
+class PasswordBlocklist(models.Model):
+    blocked_password = models.CharField(max_length=255, unique=True)
+
+    def __str__(self):
+        return self.blocked_password

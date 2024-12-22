@@ -1,5 +1,5 @@
 from django import forms
-from .models import CustomUser
+from .models import CustomUser, PasswordBlocklist
 
 class SignUpForm(forms.ModelForm):
     password = forms.CharField(widget=forms.PasswordInput(attrs={
@@ -20,6 +20,17 @@ class SignUpForm(forms.ModelForm):
                 'placeholder': 'Email'
             }),
         }
+
+    def clean_password(self):
+        password = self.cleaned_data.get('password')
+        blocked_passwords = PasswordBlocklist.objects.values_list('blocked_password', flat=True)
+        for blocked_password in blocked_passwords:
+            if blocked_password in password:
+                raise forms.ValidationError(
+                    f"The password cannot contain '{blocked_password}'. Please choose a different password."
+                )
+        return password
+
 
     def clean(self):
         cleaned_data = super().clean()
