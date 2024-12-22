@@ -28,6 +28,9 @@ class SignUpForm(forms.ModelForm):
 
         if password and password_confirm and password != password_confirm:
             self.add_error('password_confirm', "Passwords do not match.")
+        email = cleaned_data.get("email")
+        if CustomUser.objects.filter(email=email).exists():
+            self.add_error('email', "Custom user with this Email already exists.")
 
 class LoginForm(forms.Form):
     email = forms.EmailField(
